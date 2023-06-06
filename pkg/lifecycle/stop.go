@@ -1,5 +1,7 @@
 package lifecycle
 
+import "context"
+
 type Stop interface {
-	Stop() error
+	Stop(ctx context.Context) error
 }
