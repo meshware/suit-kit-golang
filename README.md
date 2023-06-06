@@ -1,8 +1,8 @@
 # suit-kit
 
-[![Build](https://github.com/meshware/local-cache/actions/workflows/build.yml/badge.svg)](https://github.com/meshware/local-cache/actions/workflows/build.yml)
-![License](https://img.shields.io/github/license/meshware/local-cache.svg)
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/meshware/local-cache.svg)](http://isitmaintained.com/project/meshware/local-cache "Percentage of issues still open")
+[![Build](https://github.com/meshware/suit-kit-golang/actions/workflows/build.yml/badge.svg)](https://github.com/meshware/suit-kit-golang/actions/workflows/build.yml)
+![License](https://img.shields.io/github/license/meshware/suit-kit-golang.svg)
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/meshware/suit-kit-golang.svg)](http://isitmaintained.com/project/meshware/suit-kit-golang "Percentage of issues still open")
 
 ## Overview
 This is a tool library for the go language.   
