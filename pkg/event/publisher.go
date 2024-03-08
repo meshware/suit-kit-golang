@@ -2,7 +2,7 @@ package event
 
 import (
 	"context"
-	"suit-kit-golang/pkg/lifecycle"
+	"github.com/meshware/suit-kit-golang/pkg/lifecycle"
 	"sync"
 	"time"
 )
