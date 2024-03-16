@@ -3,10 +3,10 @@ module github.com/meshware/suit-kit-golang
 go 1.18
 
 require (
-	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/spf13/viper v1.18.2
 	go.uber.org/zap v1.27.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 )
 
 require (

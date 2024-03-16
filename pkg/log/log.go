@@ -31,6 +31,7 @@ type Logger struct {
 
 // InitLog log instance init
 func InitLog() {
+	viper.SetDefault("log.level", "info")
 	level := viper.GetString("log.level")
 	logLevel := InfoLevel
 	if "debug" == strings.ToLower(level) {
@@ -45,16 +46,18 @@ func InitLog() {
 	if "warn" == strings.ToLower(level) {
 		logLevel = WarnLevel
 	}
-	fmt.Println(logLevel)
+	fmt.Println("Set logLevel = " + level)
+	var options = make([]Option, 0)
 	logConfig := NewProductionRotateConfig("log")
 	appName := viper.GetString("log.appName")
 	if len(appName) > 0 {
 		logConfig.Filename = appName
 	}
-	//development := viper.GetBool("log.development")
-	//if development {
-	//	modOpts = append(modOpts, setDevelopment(development))
-	//}
+	viper.SetDefault("log.development", true)
+	development := viper.GetBool("log.development")
+	if development {
+		options = append(options, Development())
+	}
 	debugFileName := viper.GetString("log.debugFileName")
 	if len(debugFileName) > 0 {
 		//modOpts = append(modOpts, setDebugFileName(debugFileName))
@@ -79,26 +82,50 @@ func InitLog() {
 	if maxSize > 0 {
 		logConfig.MaxSize = maxSize
 	}
-	iow := NewRotateBySize(logConfig)
-	//file, _ := os.OpenFile("info.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
-	std = New(iow, logLevel)
+	var iow io.Writer
+	if !development {
+		iow = NewRotateBySize(logConfig)
+	}
+	std = New(iow, logLevel, options...)
 	defer Sync()
 }
 
 func New(out io.Writer, level Level, opts ...Option) *Logger {
+	var cfg zapcore.EncoderConfig
+	// 创建写入同步器
+	var fileSyncer zapcore.WriteSyncer
+	consoleSyncer := zapcore.AddSync(os.Stdout)
 	if out == nil {
 		out = os.Stderr
+		cfg = zap.NewDevelopmentEncoderConfig()
+	} else {
+		fileSyncer = zapcore.AddSync(out)
+		cfg = zap.NewProductionEncoderConfig()
 	}
-
 	al := zap.NewAtomicLevelAt(level)
-	cfg := zap.NewProductionEncoderConfig()
 	cfg.EncodeTime = zapcore.RFC3339TimeEncoder
-
-	core := zapcore.NewCore(
-		zapcore.NewJSONEncoder(cfg),
-		zapcore.AddSync(out),
-		al,
-	)
+	// 创建zap核心
+	var core zapcore.Core
+	if fileSyncer == nil {
+		core = zapcore.NewCore(
+			zapcore.NewConsoleEncoder(cfg),
+			consoleSyncer,
+			al,
+		)
+	} else {
+		core = zapcore.NewTee(
+			zapcore.NewCore(
+				zapcore.NewConsoleEncoder(cfg),
+				consoleSyncer,
+				al,
+			),
+			zapcore.NewCore(
+				zapcore.NewJSONEncoder(cfg),
+				fileSyncer,
+				al,
+			),
+		)
+	}
 	return &Logger{l: zap.New(core, opts...), al: &al}
 }
 
