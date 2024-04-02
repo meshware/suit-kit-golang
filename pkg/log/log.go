@@ -152,6 +152,7 @@ func New(out io.Writer, level Level, opts ...Option) *Logger {
     zapLogger.With(
         zap.String("ServiceId", "your-service-id"),
         zap.String("trace-id", "your-trace-id"),
+        zap.String("goroutine-id", "222222"), // 添加协程ID
     )
     return &Logger{l: zapLogger, al: &al}
 }
