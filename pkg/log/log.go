@@ -195,6 +195,10 @@ func (l *Logger) Sync() error {
     return l.l.Sync()
 }
 
+func (l *Logger) GetZapLogger() *zap.Logger {
+    return l.l
+}
+
 func timeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
     enc.AppendString(t.Format("2006-01-02 15:04:05"))
 }
