@@ -111,7 +111,7 @@ func New(out io.Writer, level Level, opts ...Option) *Logger {
             EncodeTime: zapcore.TimeEncoderOfLayout("06-01-02.15:04:05.000 [threadId-22222]"),
             // 日志级别配置，模拟 %-5p
             LevelKey:    "level",
-            EncodeLevel: zapcore.CapitalLevelEncoder, // 或者使用 CapitalColorLevelEncoder 为控制台输出添加颜色
+            EncodeLevel: customLevelEncoder, // 或者使用 CapitalColorLevelEncoder 为控制台输出添加颜色
             // 日志记录器的名称，模拟 %-22c{0}
             NameKey:    "logger",
             EncodeName: zapcore.FullNameEncoder,
@@ -126,6 +126,9 @@ func New(out io.Writer, level Level, opts ...Option) *Logger {
     }
     al := zap.NewAtomicLevelAt(level)
     // cfg.EncodeTime = zapcore.RFC3339TimeEncoder
+    // cfg.EncodeCaller = func(caller zapcore.EntryCaller, encoder zapcore.PrimitiveArrayEncoder) {
+    //     encoder.AppendString("class" + " " + caller.TrimmedPath())
+    // }
     // 创建zap核心
     var core zapcore.Core
     if fileSyncer == nil {
@@ -215,3 +218,6 @@ func Fatal(msg string, fields ...Field) { std.Fatal(msg, fields...) }
 
 func Sync() error               { return std.Sync() }
 func GetZapLogger() *zap.Logger { return std.l }
+func customLevelEncoder(level zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
+    enc.AppendString(level.CapitalString() + " DefaultClass ")
+}
