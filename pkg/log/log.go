@@ -108,7 +108,7 @@ func New(out io.Writer, level Level, opts ...Option) *Logger {
         cfg = zapcore.EncoderConfig{
             // 时间配置，模拟 %d{yy-MM-dd.HH:mm:ss.SSS}
             TimeKey:    "time",
-            EncodeTime: zapcore.TimeEncoderOfLayout("06-01-02.15:04:05.000"),
+            EncodeTime: zapcore.TimeEncoderOfLayout("06-01-02.15:04:05.000 [threadId-22222]"),
             // 日志级别配置，模拟 %-5p
             LevelKey:    "level",
             EncodeLevel: zapcore.CapitalLevelEncoder, // 或者使用 CapitalColorLevelEncoder 为控制台输出添加颜色
@@ -149,11 +149,6 @@ func New(out io.Writer, level Level, opts ...Option) *Logger {
         )
     }
     zapLogger := zap.New(core, opts...)
-    zapLogger.With(
-        zap.String("ServiceId", "your-service-id"),
-        zap.String("trace-id", "your-trace-id"),
-        zap.String("goroutine-id", "222222"), // 添加协程ID
-    )
     return &Logger{l: zapLogger, al: &al}
 }
 
