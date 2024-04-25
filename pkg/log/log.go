@@ -24,7 +24,8 @@ const (
 )
 
 type Logger struct {
-	l *zap.Logger
+	l  *zap.Logger
+	ls *zap.SugaredLogger
 	// https://pkg.go.dev/go.uber.org/zap#example-AtomicLevel
 	al *zap.AtomicLevel
 }
@@ -126,7 +127,11 @@ func New(out io.Writer, level Level, opts ...Option) *Logger {
 			),
 		)
 	}
-	return &Logger{l: zap.New(core, opts...), al: &al}
+	return &Logger{
+		l:  zap.New(core, opts...),
+		ls: zap.New(core, opts...).Sugar(),
+		al: &al,
+	}
 }
 
 // SetLevel 动态更改日志级别
@@ -144,28 +149,56 @@ func (l *Logger) Debug(msg string, fields ...Field) {
 	l.l.Debug(msg, fields...)
 }
 
+func (l *Logger) Debugf(template string, args ...interface{}) {
+	l.ls.Debugf(template, args...)
+}
+
 func (l *Logger) Info(msg string, fields ...Field) {
 	l.l.Info(msg, fields...)
+}
+
+func (l *Logger) Infof(template string, args ...interface{}) {
+	l.ls.Infof(template, args...)
 }
 
 func (l *Logger) Warn(msg string, fields ...Field) {
 	l.l.Warn(msg, fields...)
 }
 
+func (l *Logger) Warnf(template string, args ...interface{}) {
+	l.ls.Warnf(template, args...)
+}
+
 func (l *Logger) Error(msg string, fields ...Field) {
 	l.l.Error(msg, fields...)
+}
+
+func (l *Logger) Errorf(template string, args ...interface{}) {
+	l.ls.Errorf(template, args...)
 }
 
 func (l *Logger) Panic(msg string, fields ...Field) {
 	l.l.Panic(msg, fields...)
 }
 
+func (l *Logger) Panicf(template string, args ...interface{}) {
+	l.ls.Panicf(template, args...)
+}
+
 func (l *Logger) Fatal(msg string, fields ...Field) {
 	l.l.Fatal(msg, fields...)
 }
 
+func (l *Logger) Fatalf(template string, args ...interface{}) {
+	l.ls.Fatalf(template, args...)
+}
+
 func (l *Logger) Sync() error {
 	return l.l.Sync()
+}
+
+func (l *Logger) SyncSugar() error {
+	return l.ls.Sync()
 }
 
 func timeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
@@ -183,11 +216,28 @@ func ReplaceDefault(l *Logger) { std = l }
 
 func SetLevel(level Level) { std.SetLevel(level) }
 
-func Debug(msg string, fields ...Field) { std.Debug(msg, fields...) }
-func Info(msg string, fields ...Field)  { std.Info(msg, fields...) }
-func Warn(msg string, fields ...Field)  { std.Warn(msg, fields...) }
-func Error(msg string, fields ...Field) { std.Error(msg, fields...) }
-func Panic(msg string, fields ...Field) { std.Panic(msg, fields...) }
-func Fatal(msg string, fields ...Field) { std.Fatal(msg, fields...) }
+func Debug(msg string, fields ...Field)           { std.Debug(msg, fields...) }
+func Debugf(template string, args ...interface{}) { std.Debugf(template, args...) }
 
-func Sync() error { return std.Sync() }
+func Info(msg string, fields ...Field)           { std.Info(msg, fields...) }
+func Infof(template string, args ...interface{}) { std.Infof(template, args...) }
+
+func Warn(msg string, fields ...Field)           { std.Warn(msg, fields...) }
+func Warnf(template string, args ...interface{}) { std.Warnf(template, args...) }
+
+func Error(msg string, fields ...Field)           { std.Error(msg, fields...) }
+func Errorf(template string, args ...interface{}) { std.Errorf(template, args...) }
+
+func Panic(msg string, fields ...Field)           { std.Panic(msg, fields...) }
+func Panicf(template string, args ...interface{}) { std.Panicf(template, args...) }
+
+func Fatal(msg string, fields ...Field)           { std.Fatal(msg, fields...) }
+func Fatalf(template string, args ...interface{}) { std.Fatalf(template, args...) }
+
+func Sync() error {
+	err := std.Sync()
+	if err != nil {
+		return err
+	}
+	return std.SyncSugar()
+}
