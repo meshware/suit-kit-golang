@@ -19,4 +19,4 @@ Compile requirement: Golang 1.18+.
 Preparing...
 
 ## License
-LocalCache is licensed under the [Apache License 2.0](./LICENSE).
+suit-kit-golang is licensed under the [Apache License 2.0](./LICENSE).
