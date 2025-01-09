@@ -9,3 +9,8 @@ func IsNilOrEmpty(value *string) bool {
 	}
 	return strings.TrimSpace(*value) == "" || len(*value) == 0
 }
+
+// IsEmptyOrBlank The function is used to check if a string is empty or if it contains only whitespace characters.
+func IsEmptyOrBlank(value string) bool {
+	return strings.TrimSpace(value) == "" || len(value) == 0
+}
