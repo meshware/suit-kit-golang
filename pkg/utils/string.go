@@ -14,3 +14,8 @@ func IsNilOrEmpty(value *string) bool {
 func IsEmptyOrBlank(value string) bool {
 	return strings.TrimSpace(value) == "" || len(value) == 0
 }
+
+// StringPtr The function is used to create a string pointer from a string.
+func StringPtr(s string) *string {
+	return &s
+}
