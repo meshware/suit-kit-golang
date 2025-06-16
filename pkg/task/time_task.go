@@ -307,9 +307,9 @@ func (ts *TimeScheduler) Delay(name string, delay int64, runnable func()) Timeou
 	if runnable == nil {
 		return nil
 	}
-	time := time.Now().UnixMilli() + delay
-	logger.Printf("Scheduling delay task %s: delay=%d, scheduled=%d", name, delay, time)
-	tw := newTimeWork(name, time, runnable, ts.afterRun, ts.afterCancel)
+	t := time.Now().UnixMilli() + delay
+	logger.Printf("Scheduling delay task %s: delay=%d, scheduled=%d", name, delay, t)
+	tw := newTimeWork(name, t, runnable, ts.afterRun, ts.afterCancel)
 	return ts.add(tw)
 }
 

@@ -19,3 +19,11 @@ func IsEmptyOrBlank(value string) bool {
 func StringPtr(s string) *string {
 	return &s
 }
+
+// String The function is used to convert a string pointer to a string.
+func String(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
