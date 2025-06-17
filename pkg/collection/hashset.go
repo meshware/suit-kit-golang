@@ -20,35 +20,43 @@ package collection
 import (
 	"fmt"
 	"strings"
+	"sync"
 )
 
 var itemExists = struct{}{}
 
-type HashSet struct {
-	Items map[interface{}]struct{}
+type HashSet[T comparable] struct {
+	Items map[T]struct{}
+	mu    sync.RWMutex
 }
 
-func NewSet(values ...interface{}) *HashSet {
-	set := &HashSet{Items: make(map[interface{}]struct{})}
+func NewSet[T comparable](values ...T) *HashSet[T] {
+	set := &HashSet[T]{Items: make(map[T]struct{})}
 	if len(values) > 0 {
 		set.Add(values...)
 	}
 	return set
 }
 
-func (set *HashSet) Add(items ...interface{}) {
+func (set *HashSet[T]) Add(items ...T) {
+	set.mu.Lock()
+	defer set.mu.Unlock()
 	for _, item := range items {
 		set.Items[item] = itemExists
 	}
 }
 
-func (set *HashSet) Remove(items ...interface{}) {
+func (set *HashSet[T]) Remove(items ...T) {
+	set.mu.Lock()
+	defer set.mu.Unlock()
 	for _, item := range items {
 		delete(set.Items, item)
 	}
 }
 
-func (set *HashSet) Contains(items ...interface{}) bool {
+func (set *HashSet[T]) Contains(items ...T) bool {
+	set.mu.RLock()
+	defer set.mu.RUnlock()
 	for _, item := range items {
 		if _, contains := set.Items[item]; !contains {
 			return false
@@ -57,20 +65,20 @@ func (set *HashSet) Contains(items ...interface{}) bool {
 	return true
 }
 
-func (set *HashSet) Empty() bool {
+func (set *HashSet[T]) Empty() bool {
 	return set.Size() == 0
 }
 
-func (set *HashSet) Size() int {
+func (set *HashSet[T]) Size() int {
 	return len(set.Items)
 }
 
-func (set *HashSet) Clear() {
-	set.Items = make(map[interface{}]struct{})
+func (set *HashSet[T]) Clear() {
+	set.Items = make(map[T]struct{})
 }
 
-func (set *HashSet) Values() []interface{} {
-	values := make([]interface{}, set.Size())
+func (set *HashSet[T]) Values() []T {
+	values := make([]T, set.Size())
 	count := 0
 	for item := range set.Items {
 		values[count] = item
@@ -79,12 +87,13 @@ func (set *HashSet) Values() []interface{} {
 	return values
 }
 
-func (set *HashSet) String() string {
-	str := "HashSet\n"
-	var items []string
+func (set *HashSet[T]) String() string {
+	var builder strings.Builder
+	builder.WriteString("HashSet\n")
+	items := make([]string, 0, len(set.Items))
 	for k := range set.Items {
 		items = append(items, fmt.Sprintf("%v", k))
 	}
-	str += strings.Join(items, ", ")
-	return str
+	builder.WriteString(strings.Join(items, ", "))
+	return builder.String()
 }

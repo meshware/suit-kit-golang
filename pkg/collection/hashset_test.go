@@ -22,7 +22,7 @@ func TestSetNew(t *testing.T) {
 }
 
 func TestSetAdd(t *testing.T) {
-	set := NewSet()
+	set := NewSet[int]()
 	set.Add()
 	set.Add(1)
 	set.Add(2)
@@ -37,7 +37,7 @@ func TestSetAdd(t *testing.T) {
 }
 
 func TestSetContains(t *testing.T) {
-	set := NewSet()
+	set := NewSet[int]()
 	set.Add(3, 1, 2)
 	set.Add(2, 3)
 	set.Add()
@@ -56,7 +56,7 @@ func TestSetContains(t *testing.T) {
 }
 
 func TestSetRemove(t *testing.T) {
-	set := NewSet()
+	set := NewSet[int]()
 	set.Add(3, 1, 2)
 	set.Remove()
 	if actualValue := set.Size(); actualValue != 3 {
@@ -75,7 +75,7 @@ func TestSetRemove(t *testing.T) {
 	}
 }
 
-func benchmarkContains(b *testing.B, set *HashSet, size int) {
+func benchmarkContains(b *testing.B, set *HashSet[int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			set.Contains(n)
@@ -83,7 +83,7 @@ func benchmarkContains(b *testing.B, set *HashSet, size int) {
 	}
 }
 
-func benchmarkAdd(b *testing.B, set *HashSet, size int) {
+func benchmarkAdd(b *testing.B, set *HashSet[int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			set.Add(n)
@@ -91,7 +91,7 @@ func benchmarkAdd(b *testing.B, set *HashSet, size int) {
 	}
 }
 
-func benchmarkRemove(b *testing.B, set *HashSet, size int) {
+func benchmarkRemove(b *testing.B, set *HashSet[int], size int) {
 	for i := 0; i < b.N; i++ {
 		for n := 0; n < size; n++ {
 			set.Remove(n)
@@ -102,7 +102,7 @@ func benchmarkRemove(b *testing.B, set *HashSet, size int) {
 func BenchmarkHashSetContains100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -113,7 +113,7 @@ func BenchmarkHashSetContains100(b *testing.B) {
 func BenchmarkHashSetContains1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -124,7 +124,7 @@ func BenchmarkHashSetContains1000(b *testing.B) {
 func BenchmarkHashSetContains10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -135,7 +135,7 @@ func BenchmarkHashSetContains10000(b *testing.B) {
 func BenchmarkHashSetContains100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -146,7 +146,7 @@ func BenchmarkHashSetContains100000(b *testing.B) {
 func BenchmarkHashSetAdd100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	set := NewSet()
+	set := NewSet[int]()
 	b.StartTimer()
 	benchmarkAdd(b, set, size)
 }
@@ -154,7 +154,7 @@ func BenchmarkHashSetAdd100(b *testing.B) {
 func BenchmarkHashSetAdd1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -165,7 +165,7 @@ func BenchmarkHashSetAdd1000(b *testing.B) {
 func BenchmarkHashSetAdd10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -176,7 +176,7 @@ func BenchmarkHashSetAdd10000(b *testing.B) {
 func BenchmarkHashSetAdd100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -187,7 +187,7 @@ func BenchmarkHashSetAdd100000(b *testing.B) {
 func BenchmarkHashSetRemove100(b *testing.B) {
 	b.StopTimer()
 	size := 100
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -198,7 +198,7 @@ func BenchmarkHashSetRemove100(b *testing.B) {
 func BenchmarkHashSetRemove1000(b *testing.B) {
 	b.StopTimer()
 	size := 1000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -209,7 +209,7 @@ func BenchmarkHashSetRemove1000(b *testing.B) {
 func BenchmarkHashSetRemove10000(b *testing.B) {
 	b.StopTimer()
 	size := 10000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
@@ -220,7 +220,7 @@ func BenchmarkHashSetRemove10000(b *testing.B) {
 func BenchmarkHashSetRemove100000(b *testing.B) {
 	b.StopTimer()
 	size := 100000
-	set := NewSet()
+	set := NewSet[int]()
 	for n := 0; n < size; n++ {
 		set.Add(n)
 	}
